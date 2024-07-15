@@ -1,41 +1,69 @@
+"use client";
+
 import React from "react";
 import Button from "../button";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../loading-spinner";
+import axios from "axios";
 
-interface JobProp {
+interface JobProps {
   id: number;
-  title: string;
-  company: string;
-  location: string;
-  contract: string;
-  keywords: string[];
-  postedDate: string;
-  requirements: string;
-  description: string;
-  benefits: string;
 }
 
-const Job = (id: number) => {
+const Job = ({ id }: JobProps) => {
+  // console.log(id);
+  // console.log("hello");
+
+  //   async function getJob(id: number) {
+  //     try {
+  //       const res = await fetch(`http://localhost:3000/jobs/${id}/`);
+  //       return await res.json();
+  //     } catch (err: any) {
+  //       throw err.response.data;
+  //     }
+  //   }
+
   async function getJob(id: number) {
     try {
-      const res = await fetch(`http://localhost:3000/jobs/${id}`);
-      return await res.json();
+      const res = await axios.get(`http://127.0.0.1:8000/jobs/${id}/`);
+      return await res.data;
     } catch (err: any) {
-      throw err.response.data;
+      console.error("Failed to fetch job:", err);
+      throw err;
     }
   }
-  // This useQuery could just as well happen in some deeper
-  // child to <Posts>, data will be available immediately either way
+
   const { isLoading, error, data } = useQuery({
     queryKey: ["job", id],
-    queryFn: () => getJob(Number(id)),
+    queryFn: () => getJob(id),
   });
 
-  console.log(data);
+  // if (error) {
+  //   console.error("Error fetching job data:", error);
+  // }
+
+  // if (isLoading) {
+  //   console.log("Loading");
+  // }
+
+  // console.log(data);
+
   return (
+    // <div>
+    //   <div className="font-bold text-lg">{data?.company_name}</div>
+    //   <div className="flex items-center mt-2 space-x-2 text-gray-600">
+    //     <Image
+    //       src="/vercel.svg"
+    //       alt="Afritech Logo"
+    //       className="object-cover w-8 h-8 rounded-full ring-1 ring-inset ring-black"
+    //       width={20}
+    //       height={20}
+    //     />
+    //     <p className="text-sm">{data?.job_title}</p>
+    //   </div>
+    // </div>
     <main className=" bg-slate-200 pb-20 md:px-20">
       <div className="container md:container">
         <div className="inner-container flex justify-between mx-auto p-10">
@@ -151,21 +179,24 @@ const Job = (id: number) => {
                     </div>
                     <div className="mb-5">
                       <div className="font-bold text-lg">
-                        {data?.job_location}
+                        {data?.job_location.name}
                       </div>
-                      <div className="mt-2 text-gray-600">{data?.job_type}</div>
+                      <div className="mt-2 text-gray-600">
+                        {data?.job_type.job_type_choices}
+                      </div>
                     </div>
                     <div className="pt-4 pb-2 flex flex-wrap">
-                      {data?.job_skills.map(
-                        (skill: { title: string }, index: number) => (
-                          <span
-                            key={index}
-                            className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                          >
-                            {skill.title}
-                          </span>
-                        )
-                      )}
+                      {data.job_skills &&
+                        data?.job_skills.map(
+                          (skill: { title: string }, index: number) => (
+                            <span
+                              key={index}
+                              className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+                            >
+                              {skill.title}
+                            </span>
+                          )
+                        )}
                     </div>
                     <div className="flex justify-center">
                       <Button
@@ -197,7 +228,7 @@ const Job = (id: number) => {
                         <li>{data?.job_description}</li>
                         <br />
                         <br />
-                        <li>{data?.job_requirements}</li>
+                        <li>{data?.job_description}</li>
                       </ul>
                     </div>
                   </div>
@@ -205,11 +236,12 @@ const Job = (id: number) => {
                     <div className="jd-benefits-intro">
                       <h2 className="font-bold">Benefits:</h2>
                       <ul>
-                        {data?.job_benefits
-                          .split("\n")
-                          .map((benefit: string, index: number) => (
-                            <li key={index}>{benefit}</li>
-                          ))}
+                        {data.job_benefits &&
+                          data?.job_benefits.map(
+                            (benefit: string, index: number) => (
+                              <li key={index}>{benefit}</li>
+                            )
+                          )}
                       </ul>
                     </div>
                   </div>

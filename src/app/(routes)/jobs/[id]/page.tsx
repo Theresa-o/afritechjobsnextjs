@@ -4,36 +4,43 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import Job from "@/app/components/jobs/job";
+import axios from "axios";
 
-// async function getJob() {
-//   try {
-//     const res = await fetch(`http://localhost:3000/jobs/${id}`);
-//     return await res.json();
-//   } catch (err: any) {
-//     throw err.response.data;
-//   }
-// }
-
-const JobListing = async () => {
+const JobListing = async ({ params }: { params: { id: string } }) => {
   const queryClient = new QueryClient();
+  // console.log(params.id);
+  // console.log("hiiii");
+  // const { id } = params.id
+  const id = Number(params.id);
+
+  // async function getJob(id: number) {
+  //   try {
+  //     const res = await fetch(`http://localhost:3000/jobs/${id}/`);
+  //     console.log(res);
+  //     return await res.json();
+  //   } catch (err: any) {
+  //     throw err.response.data;
+  //   }
+  // }
 
   async function getJob(id: number) {
     try {
-      const res = await fetch(`http://localhost:3000/jobs/${id}`);
-      return await res.json();
+      const res = await axios.get(`http://127.0.0.1:8000/jobs/${id}/`);
+      return await res.data;
     } catch (err: any) {
-      throw err.response.data;
+      console.error("Failed to fetch job:", err);
+      throw err;
     }
   }
 
   await queryClient.prefetchQuery({
     queryKey: ["job", id],
-    queryFn: getJob(id),
+    queryFn: () => getJob(id),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Job />
+      <Job id={id} />
     </HydrationBoundary>
   );
 };

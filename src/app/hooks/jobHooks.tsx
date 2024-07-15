@@ -1,6 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AddJobDTO } from "../types/jobTypes";
-import { createJob } from "../services/jobService";
+import {
+  createJob,
+  getCategory,
+  getJobLevel,
+  getJobType,
+  getLocation,
+  getSkills,
+} from "../services/jobService";
 import { toast } from "sonner";
 
 export const useAddJob = () => {
@@ -14,5 +21,45 @@ export const useAddJob = () => {
     onSuccess: (data) => {
       return data;
     },
+  });
+};
+
+export const useFetchedCategory = () => {
+  return useQuery({
+    queryKey: ["category"],
+    queryFn: () => getCategory(),
+    // enabled: false,
+  });
+};
+
+export const useFetchedSkills = () => {
+  return useQuery({
+    queryKey: ["skills"],
+    queryFn: () => getSkills(),
+    // enabled: false,
+  });
+};
+
+export const useFetchedLocation = () => {
+  return useQuery({
+    queryKey: ["location"],
+    queryFn: () => getLocation(),
+    // enabled: false,
+  });
+};
+
+export const useFetchedJobType = () => {
+  return useQuery({
+    queryKey: ["jobtype"],
+    queryFn: () => getJobType(),
+    // enabled: false,
+  });
+};
+
+export const useFetchedJobLevel = () => {
+  return useQuery({
+    queryKey: ["joblevel"],
+    queryFn: () => getJobLevel(),
+    // enabled: false,
   });
 };

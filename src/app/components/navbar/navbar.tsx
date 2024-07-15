@@ -79,11 +79,13 @@ const Navbar = () => {
             </li>
             <NavBarLinks />
             <div className="py-3">
-              <Button
-                style="bg-indigo-500 text-white px-6 py-2 rounded-full flex justify-center"
-                onClick={() => console.log("Create a form")}
-                text="POST A JOB"
-              />
+              <Link href="/add-job">
+                <Button
+                  style="bg-indigo-500 text-white px-6 py-2 rounded-full flex justify-center"
+                  // onClick={() => console.log("Create a form")}
+                  text="POST A JOB"
+                />
+              </Link>
             </div>
           </ul>
         </div>

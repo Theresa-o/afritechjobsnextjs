@@ -18,7 +18,7 @@ export default async function JobsPage() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["job"],
+    queryKey: ["jobs"],
     queryFn: getJobs,
   });
 
