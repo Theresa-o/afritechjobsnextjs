@@ -16,6 +16,7 @@ import {
 } from "@/app/hooks/jobHooks";
 import { toast, Toaster } from "sonner";
 import { useFetchedUsers } from "@/app/hooks/userHooks";
+import Image from "next/image";
 
 const validationSchema = Yup.object({
   jobTitle: Yup.string().required("Job title is required"),
@@ -35,12 +36,20 @@ const validationSchema = Yup.object({
   companysDescription: Yup.string(),
 });
 
+type JobTypeKeys =
+  | "FullTime"
+  | "Contract"
+  | "Freelance"
+  | "Internship"
+  | "Parttime";
+
 const AddJob = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { mutate, isPending, isError, isSuccess } = useAddJob();
   const { data: categories, isLoading: isLoadingCategories } =
     useFetchedCategory();
   const { data: skills, isLoading: isLoadingSkills } = useFetchedSkills();
+
   const { data: locations, isLoading: isLoadingLocations } =
     useFetchedLocation();
   const { data: jobTypes, isLoading: isLoadingJobTypes } = useFetchedJobType();
@@ -133,6 +142,14 @@ const AddJob = () => {
     }
   };
 
+  const jobTypeIcons: Record<JobTypeKeys, string> = {
+    FullTime: "/fulltimeIcon.svg",
+    Contract: "/contractIcon.svg",
+    Freelance: "/freelanceIcon.svg",
+    Internship: "/internshipIcon.svg",
+    Parttime: "/parttimeIcon.svg",
+  };
+
   return (
     <section>
       {/* {loading ? (
@@ -178,23 +195,23 @@ const AddJob = () => {
             <div className="md:container md:mx-auto">
               <Form className="bg-white shadow-lg rounded-lg w-full px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
                 {currentStep === 1 && (
-                  <div className="flex flex-col mb-4">
+                  <div className="flex flex-col mb-2">
                     <div className="mb-4">
                       <label
                         htmlFor="jobTitle"
                         className="block text-gray-700 text-sm font-bold mb-2"
                       >
-                        {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                          *{" "}
-                        </span> */}
-                        Job Title
+                        Job Title{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="jobTitle"
                         type="text"
                         // value={values.jobTitle}
                         // onChange={(e: any) => setJobTitle(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full capitalize py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.jobTitle && errors.jobTitle ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -205,154 +222,246 @@ const AddJob = () => {
                     </div>
 
                     <div className="flex flex-wrap">
-                      <div className="w-full md:w-1/2 md:pr-5 mb-4">
+                      <div className="w-full md:w-1/2 md:pr-5 mb-2">
                         <label
                           htmlFor="jobCategory"
-                          className="block text-gray-700 text-sm font-bold mb-2"
+                          className="block text-gray-700 text-sm font-bold"
                         >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Category
+                          Job Category{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
                         </label>
-                        <Field
-                          name="jobCategory"
-                          type="text"
-                          as="select"
-                          // value={values.jobTitle}
-                          // onChange={(e: any) => setJobTitle(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span>{" "} */}
-                          {isLoadingCategories ? (
-                            <option>Loading...</option>
-                          ) : (
-                            categories.map((category: any) => (
-                              // <option key={category.id} value={category.id}>
-                              //   {category.name}
-                              // </option>
-                              <option
-                                key={category.id}
-                                value={category.id}
-                                label={category.name}
-                              />
-                            ))
-                          )}
-                        </Field>
+                        <div className="relative">
+                          <Field
+                            name="jobCategory"
+                            type="text"
+                            as="select"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm capitalize leading-tight focus:outline-none focus:shadow-outline"
+                          >
+                            {isLoadingCategories ? (
+                              <option>Loading...</option>
+                            ) : (
+                              categories.map((category: any) => (
+                                <option
+                                  key={category.id}
+                                  value={category.id}
+                                  label={category.name}
+                                />
+                              ))
+                            )}
+                          </Field>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <Image
+                              src="/chevron-down.svg"
+                              alt="Dropdown icon"
+                              width={20}
+                              height={20}
+                              className="h-5 w-5"
+                            />
+                          </div>
+                        </div>
                         {touched.jobCategory && errors.jobCategory ? (
                           <div className="!text-red-500 text-xs italic mt-2">
                             {errors.jobCategory}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobCategory" /> */}
                       </div>
 
-                      <div className="w-full md:w-1/2 md:pl-5 mb-4">
+                      <div className="w-full md:w-1/2 md:pl-5 mb-2">
                         <label
                           htmlFor="jobSkills"
-                          className="block text-gray-700 text-sm font-bold mb-2"
+                          className="block text-gray-700 text-sm font-bold"
                         >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Skills
+                          Job Skills{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
                         </label>
-                        <Field
-                          name="jobSkills"
-                          type="text"
-                          as="select"
-                          // onChange={handleSubmit}
-                          // onBlur={handleSubmit}
-                          // value={handleSubmit}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                          {isLoadingSkills ? (
-                            <option>Loading...</option>
-                          ) : (
-                            skills.map((skill: any) => (
-                              <option key={skill.id} value={skill.id}>
-                                {skill.name}
-                              </option>
-                            ))
-                          )}
-                        </Field>
+                        <div className="relative">
+                          <Field
+                            name="jobSkills"
+                            as="select"
+                            className="shadow appearance-none capitalize border rounded w-full py-2 px-3 bg-white text-black text-sm leading-tight focus:outline-none focus:shadow-outline"
+                          >
+                            {isLoadingSkills ? (
+                              <option>Loading...</option>
+                            ) : (
+                              skills.map((skill: any) => (
+                                <option
+                                  key={skill.id}
+                                  value={skill.id}
+                                  label={skill.title}
+                                />
+                              ))
+                            )}
+                          </Field>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <Image
+                              src="/chevron-down.svg"
+                              alt="Dropdown icon"
+                              width={20}
+                              height={20}
+                              className="h-5 w-5"
+                            />
+                          </div>
+                        </div>
                         {touched.jobSkills && errors.jobSkills ? (
                           <div className="!text-red-500 text-xs italic mt-2">
                             {errors.jobSkills}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobSkills" /> */}
                       </div>
                     </div>
 
+                    <div className="w-full md:w-1/2 lg:w-1/3 mb-4">
+                      {isLoadingJobTypes ? (
+                        <div>Loading job types...</div>
+                      ) : (
+                        <>
+                          <label
+                            htmlFor="jobType"
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                          >
+                            Job Type{" "}
+                            <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                              *
+                            </span>
+                          </label>
+                          <div className="flex flex-col md:flex-row space-x-0 md:space-x-4">
+                            {" "}
+                            {/* No spacing for small screens */}
+                            {jobTypes.map(
+                              (type: {
+                                id: string;
+                                job_type_choices: JobTypeKeys;
+                              }) => (
+                                <div
+                                  key={type.id}
+                                  className="flex-1 mb-2 md:mb-0"
+                                >
+                                  {" "}
+                                  <div className="relative">
+                                    <Field
+                                      name="jobType"
+                                      as="select"
+                                      className="shadow w-full md:w-[150px] appearance-none border rounded py-2 pl-10 pr-3 capitalize bg-white text-black text-sm leading-tight focus:outline-none focus:shadow-outline"
+                                    >
+                                      <option value="">
+                                        {type.job_type_choices}
+                                      </option>
+                                    </Field>
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                      <Image
+                                        src={
+                                          jobTypeIcons[type.job_type_choices]
+                                        }
+                                        alt={type.job_type_choices}
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </div>
+                                    {touched.jobType && errors.jobType ? (
+                                      <div className="!text-red-500 text-xs italic mt-2">
+                                        {errors.jobType}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
                     <div className="flex flex-wrap">
-                      <div className="w-full md:w-1/2 md:pr-5 mb-4">
+                      <div className="w-full md:w-1/2 md:pr-5 mb-2">
                         <label
-                          htmlFor="jobType"
-                          className="block text-gray-700 text-sm font-bold mb-2"
+                          htmlFor="jobLevel"
+                          className="block text-gray-700 text-sm font-bold"
                         >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Type
+                          Job Level{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
                         </label>
-                        <Field
-                          name="jobType"
-                          type="text"
-                          as="select"
-                          // onChange={handleSubmit}
-                          // onBlur={handleSubmit}
-                          // value={handleSubmit}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                          {isLoadingJobTypes ? (
-                            <option>Loading...</option>
-                          ) : (
-                            jobTypes.map((type: any) => (
-                              <option key={type.id} value={type.id}>
-                                {type.name}
-                              </option>
-                            ))
-                          )}
-                        </Field>
-                        {touched.jobType && errors.jobType ? (
+                        <div className="relative">
+                          <Field
+                            name="jobLevel"
+                            type="text"
+                            as="select"
+                            // value={values.jobLevel}
+                            // onChange={(e: any) => setJobLevel(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-3 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                          >
+                            {isLoadingJobLevels ? (
+                              <option>Loading...</option>
+                            ) : (
+                              jobLevels.map((level: any) => (
+                                <option key={level.id} value={level.id}>
+                                  {level.job_level_choices}
+                                </option>
+                              ))
+                            )}
+                          </Field>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <Image
+                              src="/chevron-down.svg"
+                              alt="Dropdown icon"
+                              width={20}
+                              height={20}
+                              className="h-5 w-5"
+                            />
+                          </div>
+                        </div>
+                        {touched.jobLevel && errors.jobLevel ? (
                           <div className="!text-red-500 text-xs italic mt-2">
-                            {errors.jobType}
+                            {errors.jobLevel}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobType" /> */}
+                        {/* <ErrorMessage name="jobLevel" /> */}
                       </div>
-                      <div className="w-full md:w-1/2 md:pl-5 mb-4">
+                      <div className="w-full md:w-1/2 md:pl-5 mb-2">
                         <label
                           htmlFor="jobLocation"
-                          className="block text-gray-700 text-sm font-bold mb-2"
+                          className="block text-gray-700 text-sm font-bold"
                         >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Location
+                          Job Location{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
                         </label>
-                        <Field
-                          name="jobLocation"
-                          type="text"
-                          as="select"
-                          // onChange={handleSubmit}
-                          // onBlur={handleSubmit}
-                          // value={handleSubmit}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                          {isLoadingLocations ? (
-                            <option>Loading...</option>
-                          ) : (
-                            locations.map((location: any) => (
-                              <option key={location.id} value={location.id}>
-                                {location.name}
-                              </option>
-                            ))
-                          )}
-                        </Field>
+                        <div className="relative">
+                          <Field
+                            name="jobLocation"
+                            type="text"
+                            as="select"
+                            // onChange={handleSubmit}
+                            // onBlur={handleSubmit}
+                            // value={handleSubmit}
+                            className="shadow appearance-none border rounded w-full py-3 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                          >
+                            {isLoadingLocations ? (
+                              <option>Loading...</option>
+                            ) : (
+                              locations.map((location: any) => (
+                                <option key={location.id} value={location.id}>
+                                  {location.name}
+                                </option>
+                              ))
+                            )}
+                          </Field>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <Image
+                              src="/chevron-down.svg"
+                              alt="Dropdown icon"
+                              width={20}
+                              height={20}
+                              className="h-5 w-5"
+                            />
+                          </div>
+                        </div>
                         {touched.jobLocation && errors.jobLocation ? (
                           <div className="!text-red-500 text-xs italic mt-2">
                             {errors.jobLocation}
@@ -363,57 +472,22 @@ const AddJob = () => {
                     </div>
 
                     <div className="flex flex-wrap">
-                      <div className="w-full md:w-1/2 md:pr-5 mb-4">
-                        <label
-                          htmlFor="jobLevel"
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                        >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Level
-                        </label>
-                        <Field
-                          name="jobLevel"
-                          type="text"
-                          as="select"
-                          // value={values.jobLevel}
-                          // onChange={(e: any) => setJobLevel(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                          {isLoadingJobLevels ? (
-                            <option>Loading...</option>
-                          ) : (
-                            jobLevels.map((level: any) => (
-                              <option key={level.id} value={level.id}>
-                                {level.name}
-                              </option>
-                            ))
-                          )}
-                        </Field>
-                        {touched.jobLevel && errors.jobLevel ? (
-                          <div className="!text-red-500 text-xs italic mt-2">
-                            {errors.jobLevel}
-                          </div>
-                        ) : null}
-                        {/* <ErrorMessage name="jobLevel" /> */}
-                      </div>
-                      <div className="w-full md:w-1/2 md:pl-5 mb-4">
+                      <div className="w-full md:w-1/2 md:pr-5 mb-2">
                         <label
                           htmlFor="jobSalary"
-                          className="block text-gray-700 text-sm font-bold mb-2"
+                          className="block text-gray-700 text-sm font-bold"
                         >
-                          {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                            *{" "}
-                          </span> */}
-                          Job Salary
+                          Job Salary{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
                         </label>
                         <Field
                           name="jobSalary"
                           type="text"
                           // value={values.jobSalary}
                           // onChange={(e: any) => setJobSalary(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         {touched.jobSalary && errors.jobSalary ? (
                           <div className="!text-red-500 text-xs italic mt-2">
@@ -422,39 +496,42 @@ const AddJob = () => {
                         ) : null}
                         {/* <ErrorMessage name="jobSalary" /> */}
                       </div>
+
+                      <div className="w-full md:w-1/2 md:pl-5 mb-2">
+                        <label
+                          htmlFor="jobUrl"
+                          className="block text-gray-700 text-sm font-bold"
+                        >
+                          Job Link{" "}
+                          <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                            *
+                          </span>
+                        </label>
+                        <Field
+                          name="jobUrl"
+                          type="text"
+                          // value={values.jobUrl}
+                          // onChange={(e: any) => setJobUrl(e.target.value)}
+                          className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                        {touched.jobUrl && errors.jobUrl ? (
+                          <div className="!text-red-500 text-xs italic mt-2">
+                            {errors.jobUrl}
+                          </div>
+                        ) : null}
+                        {/* <ErrorMessage name="jobUrl" /> */}
+                      </div>
                     </div>
 
-                    <div className="mb-4">
-                      <label
-                        htmlFor="jobUrl"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                          *{" "}
-                        </span> */}
-                        Job Link
-                      </label>
-                      <Field
-                        name="jobUrl"
-                        type="text"
-                        // value={values.jobUrl}
-                        // onChange={(e: any) => setJobUrl(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                      {touched.jobUrl && errors.jobUrl ? (
-                        <div className="!text-red-500 text-xs italic mt-2">
-                          {errors.jobUrl}
-                        </div>
-                      ) : null}
-                      {/* <ErrorMessage name="jobUrl" /> */}
-                    </div>
-
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="jobDescription"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
-                        Job Description
+                        Job Description{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="jobDescription"
@@ -462,7 +539,7 @@ const AddJob = () => {
                         as="textarea"
                         // value={values.jobDescription}
                         // onChange={(e: any) => setJobDescription(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.jobDescription && errors.jobDescription ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -476,22 +553,22 @@ const AddJob = () => {
 
                 {currentStep === 2 && (
                   <div>
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="companyName"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
-                        {/* <span className="text-red-500 ltr:mr-1 rtl:ml-1">
-                          *{" "}
-                        </span> */}
-                        Company Name
+                        Company Name{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="companyName"
                         type="text"
                         // value={values.companyName}
                         // onChange={(e: any) => setCompanyName(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companyName && errors.companyName ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -501,10 +578,10 @@ const AddJob = () => {
                       {/* <ErrorMessage name="companyName" /> */}
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="companyHq"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
                         Company HQ
                       </label>
@@ -513,7 +590,7 @@ const AddJob = () => {
                         type="text"
                         // value={values.companyHq}
                         // onChange={(e: any) => setCompanyHq(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companyHq && errors.companyHq ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -523,12 +600,15 @@ const AddJob = () => {
                       {/* <ErrorMessage name="companyHq" /> */}
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="companysWebsite"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Website
+                        Company's Website{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="companysWebsite"
@@ -537,7 +617,7 @@ const AddJob = () => {
                         // onChange={(e: any) =>
                         //   setCompanysWebsite(e.target.value)
                         // }
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companysWebsite && errors.companysWebsite ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -547,19 +627,22 @@ const AddJob = () => {
                       {/* <ErrorMessage name="companysWebsite" /> */}
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="companysEmail"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Email
+                        Company's Email{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="companysEmail"
                         type="email"
                         // value={values.companysEmail}
                         // onChange={(e: any) => setCompanysEmail(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companysEmail && errors.companysEmail ? (
                         <div className="!text-red-500 text-xs italic mt-2">
@@ -569,12 +652,15 @@ const AddJob = () => {
                       {/* <ErrorMessage name="companysEmail" /> */}
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <label
                         htmlFor="companysDescription"
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Description
+                        Company's Description{" "}
+                        <span className="text-red-500 ltr:mr-1 rtl:ml-1">
+                          *
+                        </span>
                       </label>
                       <Field
                         name="companysDescription"
@@ -583,7 +669,7 @@ const AddJob = () => {
                         // onChange={(e: any) =>
                         //   setCompanysDescription(e.target.value)
                         // }
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companysDescription &&
                       errors.companysDescription ? (
@@ -607,7 +693,7 @@ const AddJob = () => {
                     <button
                       onClick={goToPreviousStep}
                       type="button"
-                      className="px-6 py-2 min-w-[120px] text-center text-white bg-violet-600 border border-violet-600 rounded active:text-violet-500 hover:bg-transparent hover:text-violet-600 focus:outline-none"
+                      className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200  hover:bg-transparent hover:text-vpurple-900 focus:outline-none"
                     >
                       Previous
                     </button>
@@ -617,14 +703,14 @@ const AddJob = () => {
                     <button
                       onClick={goToNextStep}
                       type="button"
-                      className="px-6 py-2 min-w-[120px] text-center text-white bg-violet-600 border border-violet-600 rounded active:text-violet-500 hover:bg-transparent hover:text-violet-600 focus:outline-none"
+                      className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200 hover:bg-transparent hover:text-purple-900 focus:outline-none"
                     >
                       Next
                     </button>
                   ) : (
                     <button
                       type="submit"
-                      className="px-6 py-2 min-w-[120px] text-center text-white bg-violet-600 border border-violet-600 rounded active:text-violet-500 hover:bg-transparent hover:text-violet-600 focus:outline-none"
+                      className="px-6 py-2 min-w-[120px] text-center text-white bg-bg-purple-900 border border-purple-900 rounded active:text-purple-200 hover:bg-transparent hover:text-purple-900 focus:outline-none"
                     >
                       Submit
                     </button>

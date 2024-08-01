@@ -49,3 +49,11 @@ export const getJobLevel = async () => {
   // console.log(response);
   return response.data;
 };
+
+export const getCategoryJobs = async (categoryId: string) => {
+  const response = await axiosInstance.get(
+    `http://127.0.0.1:8000/jobs?category=${categoryId}`
+  );
+  // console.log(response);
+  return response.data;
+};

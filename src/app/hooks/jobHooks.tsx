@@ -3,6 +3,7 @@ import { AddJobDTO } from "../types/jobTypes";
 import {
   createJob,
   getCategory,
+  getCategoryJobs,
   getJobLevel,
   getJobType,
   getLocation,
@@ -60,6 +61,14 @@ export const useFetchedJobLevel = () => {
   return useQuery({
     queryKey: ["joblevel"],
     queryFn: () => getJobLevel(),
+    // enabled: false,
+  });
+};
+
+export const useFetchedCategoryJobs = (categoryId: string) => {
+  return useQuery({
+    queryKey: ["categoryJobs", categoryId],
+    queryFn: () => getCategoryJobs(categoryId),
     // enabled: false,
   });
 };

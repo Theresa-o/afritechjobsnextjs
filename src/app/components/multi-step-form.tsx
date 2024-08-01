@@ -21,7 +21,7 @@ const MultiStepForm = ({
             <div className="flex items-center">
               <div
                 className={`rounded-full h-12 w-12 flex items-center justify-center text-white ${
-                  currentStep >= step.id ? "bg-blue-600" : "bg-gray-400"
+                  currentStep >= step.id ? "bg-purple-200" : "bg-gray-400"
                 }`}
               >
                 {step.id}
@@ -31,7 +31,7 @@ const MultiStepForm = ({
             {index < steps.length - 1 && (
               <div
                 className={`flex-1 h-1 ${
-                  currentStep > step.id ? "bg-blue-600" : "bg-gray-400"
+                  currentStep > step.id ? "bg-purple-200" : "bg-gray-400"
                 }`}
               ></div>
             )}

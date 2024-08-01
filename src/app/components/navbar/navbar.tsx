@@ -19,7 +19,7 @@ const Navbar = () => {
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
-              className="dark:invert"
+              // className="dark:invert"
               width={100}
               height={24}
               priority
@@ -38,27 +38,22 @@ const Navbar = () => {
             </div>
           </div>
 
-          <ul className="md:flex hidden md:uppercase md:gap-8  md:font-[Poppings] duration-500">
+          <ul className="md:flex hidden md:uppercase md:gap-8  md:font-[Poppings] duration-500 my-auto">
             <li>
               <Link
                 href="/"
                 className={`link ${
                   pathname === "/"
-                    ? "py-7 px-3 inline-block bg-indigo-500"
-                    : "py-7 px-3 inline-block"
+                    ? "md:mt-3 py-7 px-3 inline-block text-purple-200"
+                    : "md:mt-3  py-7 px-3 inline-block"
                 }`}
-                // className={({ isActive }) =>
-                //   isActive
-                //     ? "py-7 px-3 inline-block bg-indigo-500"
-                //     : "py-7 px-3 inline-block"
-                // }
               >
                 Home
               </Link>
             </li>
             <NavBarLinks />
           </ul>
-          <div className="md:flex hidden">
+          <div className="md:flex hidden my-auto">
             <Link href="/add-job">
               <Button
                 style="bg-indigo-500 text-white px-6 rounded-full"
@@ -73,15 +68,22 @@ const Navbar = () => {
             } `}
           >
             <li>
-              <Link href="/add-job" className="py-7 px-3 inline-block">
+              <Link
+                href="/add-job"
+                className={`link ${
+                  pathname === "/"
+                    ? "py-7 px-3 inline-block text-purple-200"
+                    : "py-7 px-3 inline-block"
+                }`}
+              >
                 Home
               </Link>
             </li>
             <NavBarLinks />
-            <div className="py-3">
+            <div className="mt-2">
               <Link href="/add-job">
                 <Button
-                  style="bg-indigo-500 text-white px-6 py-2 rounded-full flex justify-center"
+                  style="bg-purple-200 text-white px-6 rounded-full flex justify-center"
                   // onClick={() => console.log("Create a form")}
                   text="POST A JOB"
                 />
