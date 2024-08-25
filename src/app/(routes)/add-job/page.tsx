@@ -17,6 +17,8 @@ import {
 import { toast, Toaster } from "sonner";
 import { useFetchedUsers } from "@/app/hooks/userHooks";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import Tiptap from "@/app/components/tiptap";
 
 const validationSchema = Yup.object({
   jobTitle: Yup.string().required("Job title is required"),
@@ -31,9 +33,11 @@ const validationSchema = Yup.object({
   // createdBy: Yup.string(),
   companyName: Yup.string().required("Please provide the name"),
   companyHq: Yup.string(),
-  companysWebsite: Yup.string(),
-  companysEmail: Yup.string().email("Invalid email address"),
-  companysDescription: Yup.string(),
+  companysWebsite: Yup.string().required("Enter the company's website"),
+  companysEmail: Yup.string()
+    .email("Invalid email address")
+    .required("Enter the company's email"),
+  companysDescription: Yup.string().required("What does the company do?"),
 });
 
 type JobTypeKeys =
@@ -44,6 +48,8 @@ type JobTypeKeys =
   | "Parttime";
 
 const AddJob = () => {
+  const [jobDescription, setJobDescription] = useState("");
+  const [companysDescription, setCompanysDescription] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const { mutate, isPending, isError, isSuccess } = useAddJob();
   const { data: categories, isLoading: isLoadingCategories } =
@@ -55,10 +61,15 @@ const AddJob = () => {
   const { data: jobTypes, isLoading: isLoadingJobTypes } = useFetchedJobType();
   const { data: jobLevels, isLoading: isLoadingJobLevels } =
     useFetchedJobLevel();
+
   // const { data: users, isLoading: isLoadingUsers } = useFetchedUsers();
 
-  const createJobFn = async (values: any, { setSubmitting }: any) => {
-    // console.log("createJobFn called with values:", values);
+  const router = useRouter();
+
+  const createJobFn = async (
+    values: any,
+    { setSubmitting, resetForm }: any
+  ) => {
     const {
       jobTitle,
       jobDescription,
@@ -100,16 +111,16 @@ const AddJob = () => {
     mutate(body, {
       onSuccess: () => {
         setSubmitting(false);
-        // setTimeout(() => {
-        //     navigate('/sign-in')
-        // }, 3000)
+        resetForm();
+        setTimeout(() => {
+          // navigate('/sign-in')
+          router.push("/");
+        }, 3000);
         toast.success("Job created successfully!");
-        // setStage(1)
       },
       onError: (error: any) => {
         setSubmitting(false);
         toast.error(error.message);
-        // setStage(1)
       },
     });
   };
@@ -132,16 +143,6 @@ const AddJob = () => {
     }
   };
 
-  const handleSubmit = (values: any, { setSubmitting }: any) => {
-    // console.log("handleSubmit called with values:", values);
-    if (currentStep === 3) {
-      setSubmitting(false);
-      createJobFn(values, { setSubmitting });
-    } else {
-      goToNextStep();
-    }
-  };
-
   const jobTypeIcons: Record<JobTypeKeys, string> = {
     FullTime: "/fulltimeIcon.svg",
     Contract: "/contractIcon.svg",
@@ -152,9 +153,6 @@ const AddJob = () => {
 
   return (
     <section>
-      {/* {loading ? (
-        <LoadingSpinner isLoading={loading} />
-      ) : ( */}
       <div>
         <MultiStepForm
           steps={steps}
@@ -181,18 +179,24 @@ const AddJob = () => {
             companysEmail: "",
             companysDescription: "",
           }}
-          // validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          //   onSubmit={(values, { resetForm, setSubmitting }) => {
-          //     console.log(values)
-          //     createRegisterBusiness(values, {
-          //         setSubmitting,
-          //         resetForm,
-          //     });
-          // }}
+          validationSchema={validationSchema}
+          onSubmit={(values, { resetForm, setSubmitting }) => {
+            createJobFn(values, {
+              setSubmitting,
+              resetForm,
+            });
+          }}
         >
-          {({ values, errors, touched }) => (
-            <div className="md:container md:mx-auto">
+          {({
+            values,
+            errors,
+            touched,
+            isSubmitting,
+            setFieldValue,
+            isValid,
+            setTouched,
+          }) => (
+            <div className="md:container md:mx-auto mb-12">
               <Form className="bg-white shadow-lg rounded-lg w-full px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
                 {currentStep === 1 && (
                   <div className="flex flex-col mb-2">
@@ -209,8 +213,6 @@ const AddJob = () => {
                       <Field
                         name="jobTitle"
                         type="text"
-                        // value={values.jobTitle}
-                        // onChange={(e: any) => setJobTitle(e.target.value)}
                         className="shadow appearance-none border rounded w-full capitalize py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.jobTitle && errors.jobTitle ? (
@@ -218,7 +220,6 @@ const AddJob = () => {
                           {errors.jobTitle}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="jobTitle" className="field-error" /> */}
                     </div>
 
                     <div className="flex flex-wrap">
@@ -239,10 +240,13 @@ const AddJob = () => {
                             as="select"
                             className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm capitalize leading-tight focus:outline-none focus:shadow-outline"
                           >
+                            <option value="" disabled>
+                              Select
+                            </option>
                             {isLoadingCategories ? (
                               <option>Loading...</option>
                             ) : (
-                              categories.map((category: any) => (
+                              categories?.map((category: any) => (
                                 <option
                                   key={category.id}
                                   value={category.id}
@@ -284,10 +288,13 @@ const AddJob = () => {
                             as="select"
                             className="shadow appearance-none capitalize border rounded w-full py-2 px-3 bg-white text-black text-sm leading-tight focus:outline-none focus:shadow-outline"
                           >
+                            <option value="" disabled>
+                              Select
+                            </option>
                             {isLoadingSkills ? (
                               <option>Loading...</option>
                             ) : (
-                              skills.map((skill: any) => (
+                              skills?.map((skill: any) => (
                                 <option
                                   key={skill.id}
                                   value={skill.id}
@@ -329,47 +336,52 @@ const AddJob = () => {
                             </span>
                           </label>
                           <div className="flex flex-col md:flex-row space-x-0 md:space-x-4">
-                            {" "}
-                            {/* No spacing for small screens */}
-                            {jobTypes.map(
-                              (type: {
-                                id: string;
-                                job_type_choices: JobTypeKeys;
-                              }) => (
-                                <div
-                                  key={type.id}
-                                  className="flex-1 mb-2 md:mb-0"
-                                >
-                                  {" "}
-                                  <div className="relative">
-                                    <Field
-                                      name="jobType"
-                                      as="select"
-                                      className="shadow w-full md:w-[150px] appearance-none border rounded py-2 pl-10 pr-3 capitalize bg-white text-black text-sm leading-tight focus:outline-none focus:shadow-outline"
-                                    >
-                                      <option value="">
-                                        {type.job_type_choices}
-                                      </option>
-                                    </Field>
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                      <Image
-                                        src={
-                                          jobTypeIcons[type.job_type_choices]
-                                        }
-                                        alt={type.job_type_choices}
-                                        width={20}
-                                        height={20}
-                                      />
-                                    </div>
-                                    {touched.jobType && errors.jobType ? (
-                                      <div className="!text-red-500 text-xs italic mt-2">
-                                        {errors.jobType}
-                                      </div>
-                                    ) : null}
-                                  </div>
+                            {jobTypes?.map((type: any) => (
+                              <div
+                                key={type.id}
+                                className="flex-1 mb-2 md:mb-0"
+                              >
+                                <div className="relative flex items-center">
+                                  <Field
+                                    type="radio"
+                                    id={type.id}
+                                    name="jobType"
+                                    value={type.id}
+                                    checked={values.jobType === type.id}
+                                    className="hidden"
+                                    onChange={() => {
+                                      setFieldValue("jobType", type.id);
+                                    }}
+                                  />
+                                  <label
+                                    htmlFor={type.id}
+                                    className={`cursor-pointer shadow w-full md:w-[150px] border rounded py-2 pl-3 pr-3 capitalize bg-white text-black text-sm leading-tight focus:outline-none focus:shadow-outline flex items-center ${
+                                      values.jobType === type.id
+                                        ? "!bg-purple-100 border-purple-100"
+                                        : "bg-white border-gray-300"
+                                    }`}
+                                  >
+                                    <Image
+                                      src={
+                                        jobTypeIcons[
+                                          type.job_type_choices as JobTypeKeys
+                                        ]
+                                      }
+                                      alt={type.job_type_choices}
+                                      width={20}
+                                      height={20}
+                                      className="mr-2"
+                                    />
+                                    {type.job_type_choices}
+                                  </label>
                                 </div>
-                              )
-                            )}
+                                {touched.jobType && errors.jobType && (
+                                  <div className="!text-red-500 text-xs italic mt-2">
+                                    {errors.jobType}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         </>
                       )}
@@ -391,15 +403,21 @@ const AddJob = () => {
                             name="jobLevel"
                             type="text"
                             as="select"
-                            // value={values.jobLevel}
-                            // onChange={(e: any) => setJobLevel(e.target.value)}
                             className="shadow appearance-none border rounded w-full py-3 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                           >
+                            <option value="" disabled>
+                              Select
+                            </option>
                             {isLoadingJobLevels ? (
                               <option>Loading...</option>
                             ) : (
-                              jobLevels.map((level: any) => (
-                                <option key={level.id} value={level.id}>
+                              jobLevels?.map((level: any) => (
+                                <option
+                                  key={level.id}
+                                  value={level.id}
+                                  className="!bg-lime-300"
+                                  style={{ backgroundColor: "red" }}
+                                >
                                   {level.job_level_choices}
                                 </option>
                               ))
@@ -420,7 +438,6 @@ const AddJob = () => {
                             {errors.jobLevel}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobLevel" /> */}
                       </div>
                       <div className="w-full md:w-1/2 md:pl-5 mb-2">
                         <label
@@ -437,15 +454,15 @@ const AddJob = () => {
                             name="jobLocation"
                             type="text"
                             as="select"
-                            // onChange={handleSubmit}
-                            // onBlur={handleSubmit}
-                            // value={handleSubmit}
                             className="shadow appearance-none border rounded w-full py-3 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                           >
+                            <option value="" disabled>
+                              Select
+                            </option>
                             {isLoadingLocations ? (
                               <option>Loading...</option>
                             ) : (
-                              locations.map((location: any) => (
+                              locations?.map((location: any) => (
                                 <option key={location.id} value={location.id}>
                                   {location.name}
                                 </option>
@@ -467,7 +484,6 @@ const AddJob = () => {
                             {errors.jobLocation}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobLocation" /> */}
                       </div>
                     </div>
 
@@ -485,16 +501,13 @@ const AddJob = () => {
                         <Field
                           name="jobSalary"
                           type="text"
-                          // value={values.jobSalary}
-                          // onChange={(e: any) => setJobSalary(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         {touched.jobSalary && errors.jobSalary ? (
                           <div className="!text-red-500 text-xs italic mt-2">
                             {errors.jobSalary}
                           </div>
                         ) : null}
-                        {/* <ErrorMessage name="jobSalary" /> */}
                       </div>
 
                       <div className="w-full md:w-1/2 md:pl-5 mb-2">
@@ -510,9 +523,7 @@ const AddJob = () => {
                         <Field
                           name="jobUrl"
                           type="text"
-                          // value={values.jobUrl}
-                          // onChange={(e: any) => setJobUrl(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         {touched.jobUrl && errors.jobUrl ? (
                           <div className="!text-red-500 text-xs italic mt-2">
@@ -533,20 +544,22 @@ const AddJob = () => {
                           *
                         </span>
                       </label>
-                      <Field
+                      {/* <Field
                         name="jobDescription"
                         type="textarea"
                         as="textarea"
-                        // value={values.jobDescription}
-                        // onChange={(e: any) => setJobDescription(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                      /> */}
+                      <Tiptap
+                        editorContent={jobDescription}
+                        onChange={setJobDescription}
                       />
+
                       {touched.jobDescription && errors.jobDescription ? (
                         <div className="!text-red-500 text-xs italic mt-2">
                           {errors.jobDescription}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="jobDescription" /> */}
                     </div>
                   </div>
                 )}
@@ -566,8 +579,6 @@ const AddJob = () => {
                       <Field
                         name="companyName"
                         type="text"
-                        // value={values.companyName}
-                        // onChange={(e: any) => setCompanyName(e.target.value)}
                         className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companyName && errors.companyName ? (
@@ -575,7 +586,6 @@ const AddJob = () => {
                           {errors.companyName}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="companyName" /> */}
                     </div>
 
                     <div className="mb-2">
@@ -588,8 +598,6 @@ const AddJob = () => {
                       <Field
                         name="companyHq"
                         type="text"
-                        // value={values.companyHq}
-                        // onChange={(e: any) => setCompanyHq(e.target.value)}
                         className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companyHq && errors.companyHq ? (
@@ -597,7 +605,6 @@ const AddJob = () => {
                           {errors.companyHq}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="companyHq" /> */}
                     </div>
 
                     <div className="mb-2">
@@ -613,18 +620,13 @@ const AddJob = () => {
                       <Field
                         name="companysWebsite"
                         type="text"
-                        // value={values.companysWebsite}
-                        // onChange={(e: any) =>
-                        //   setCompanysWebsite(e.target.value)
-                        // }
-                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companysWebsite && errors.companysWebsite ? (
                         <div className="!text-red-500 text-xs italic mt-2">
                           {errors.companysWebsite}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="companysWebsite" /> */}
                     </div>
 
                     <div className="mb-2">
@@ -640,16 +642,13 @@ const AddJob = () => {
                       <Field
                         name="companysEmail"
                         type="email"
-                        // value={values.companysEmail}
-                        // onChange={(e: any) => setCompanysEmail(e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
                       />
                       {touched.companysEmail && errors.companysEmail ? (
                         <div className="!text-red-500 text-xs italic mt-2">
                           {errors.companysEmail}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="companysEmail" /> */}
                     </div>
 
                     <div className="mb-2">
@@ -662,14 +661,14 @@ const AddJob = () => {
                           *
                         </span>
                       </label>
-                      <Field
+                      {/* <Field
                         name="companysDescription"
                         type="text"
-                        // value={values.companysDescription}
-                        // onChange={(e: any) =>
-                        //   setCompanysDescription(e.target.value)
-                        // }
-                        className="shadow appearance-none border rounded w-full py-2 px-3 capitalize bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black text-sm mt-0 md:mt-3 leading-tight focus:outline-none focus:shadow-outline"
+                      /> */}
+                      <Tiptap
+                        editorContent={companysDescription}
+                        onChange={setCompanysDescription}
                       />
                       {touched.companysDescription &&
                       errors.companysDescription ? (
@@ -677,13 +676,15 @@ const AddJob = () => {
                           {errors.companysDescription}
                         </div>
                       ) : null}
-                      {/* <ErrorMessage name="companysDescription" /> */}
                     </div>
                   </div>
                 )}
 
                 {currentStep === 3 && (
-                  <div className="flex justify-center">hi</div>
+                  <div className="flex flex-col justify-center">
+                    <h1>Thank You.</h1>
+                    <h2>The team would review and provide feedback</h2>
+                  </div>
                 )}
 
                 <div className="flex justify-between p-4">
@@ -693,15 +694,18 @@ const AddJob = () => {
                     <button
                       onClick={goToPreviousStep}
                       type="button"
-                      className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200  hover:bg-transparent hover:text-vpurple-900 focus:outline-none"
+                      className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200  hover:bg-transparent hover:text-purple-900 focus:outline-none"
                     >
                       Previous
                     </button>
                   )}
 
-                  {currentStep < steps.length ? (
+                  {currentStep === 1 || currentStep === 2 ? (
                     <button
-                      onClick={goToNextStep}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToNextStep();
+                      }}
                       type="button"
                       className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200 hover:bg-transparent hover:text-purple-900 focus:outline-none"
                     >
@@ -710,9 +714,10 @@ const AddJob = () => {
                   ) : (
                     <button
                       type="submit"
-                      className="px-6 py-2 min-w-[120px] text-center text-white bg-bg-purple-900 border border-purple-900 rounded active:text-purple-200 hover:bg-transparent hover:text-purple-900 focus:outline-none"
+                      disabled={isSubmitting || !isValid}
+                      className="px-6 py-2 min-w-[120px] text-center text-white bg-purple-900 border border-purple-900 rounded active:text-purple-200 hover:bg-transparent hover:text-purple-900 focus:outline-none"
                     >
-                      Submit
+                      {isValid ? "Incomplete form" : "Submit"}
                     </button>
                   )}
                 </div>
@@ -720,231 +725,10 @@ const AddJob = () => {
             </div>
           )}
         </Formik>
-        {/* form */}
         <Toaster richColors position="top-right" />{" "}
       </div>
-      {/* )} */}
     </section>
   );
 };
 
 export default AddJob;
-
-{
-  /* <div className="md:container md:mx-auto ">
-          {" "}
-          <Form className="bg-white shadow appearance-none rounded w-full px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
-            {currentStep === 1 && (
-              <div className="flex flex-col mb-4 ">
-                <div className="mb-4">
-                  {" "}
-                  <label
-                    htmlFor="jobTitle"
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                  >
-                    Job Title
-                  </label>
-                  <Field
-                    name="jobTitle"
-                    type="text"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                  <ErrorMessage name="jobTitle" />
-                </div>
-
-                <div className="flex flex-wrap mb-4">
-                  <div className="w-full md:w-1/2 pr-10">
-                    <label
-                      htmlFor="jobCategory"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Category
-                    </label>
-                    <Field
-                      name="jobCategory"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobCategory" />
-                  </div>
-
-                  <div className="w-full md:w-1/2 pl-10">
-                    <label
-                      htmlFor="jobSkills"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Skills
-                    </label>
-                    <Field
-                      name="jobSkills"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobSkills" />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap mb-4">
-                  <div className="w-full md:w-1/2 pr-10">
-                    {" "}
-                    <label
-                      htmlFor="jobType"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Type
-                    </label>
-                    <Field
-                      name="jobType"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobType" />
-                  </div>
-                  <div className="w-full md:w-1/2 pl-10">
-                    {" "}
-                    <label
-                      htmlFor="jobLocation"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Location
-                    </label>
-                    <Field
-                      name="jobLocation"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobLocation" />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap mb-4 ">
-                  <div className="w-full md:w-1/2 pr-5">
-                    {" "}
-                    <label
-                      htmlFor="jobLevel"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Level
-                    </label>
-                    <Field
-                      name="jobLevel"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobLevel" />
-                  </div>
-                  <div className="w-full md:w-1/2 pl-5">
-                    <label
-                      htmlFor="jobSalary"
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                    >
-                      Job Salary
-                    </label>
-                    <Field
-                      name="jobSalary"
-                      type="text"
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <ErrorMessage name="jobSalary" />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="jobUrl"
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                  >
-                    Job Link
-                  </label>
-                  <Field
-                    name="jobUrl"
-                    type="text"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                  <ErrorMessage name="jobUrl" />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="jobDescription"
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                  >
-                    Job Description
-                  </label>
-                  <Field
-                    name="jobDescription"
-                    type="text"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                  <ErrorMessage name="jobDescription" />
-                </div>
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div>
-                <label htmlFor="createdBy">Created By</label>
-                <Field name="createdBy" type="text" />
-                <ErrorMessage name="createdBy" />
-
-                <label htmlFor="companyName">Company Name</label>
-                <Field name="companyName" type="text" />
-                <ErrorMessage name="companyName" />
-
-                <label htmlFor="companyHq">Company Hq</label>
-                <Field name="companyHq" type="text" />
-                <ErrorMessage name="companyHq" />
-
-                <label htmlFor="companysWebsite">Companys Website</label>
-                <Field name="companysWebsite" type="text" />
-                <ErrorMessage name="companysWebsite" />
-
-                <label htmlFor="companysEmail">Companys Email</label>
-                <Field name="companysEmail" type="email" />
-                <ErrorMessage name="companysEmail" />
-
-                <label htmlFor="companysDescription">
-                  Companys Description
-                </label>
-                <Field name="companysDescription" type="text" />
-                <ErrorMessage name="jobUcompanysDescriptionrl" />
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <div className="justify-center">
-                  <button className="w-full" type="submit">
-                    {" "}
-                    Submit
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-between p-4">
-              <button
-                onClick={goToPreviousStep}
-                disabled={currentStep === 1}
-                className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
-              >
-                Previous
-              </button>
-
-              {currentStep < steps.length ? (
-                <button
-                  onClick={goToNextStep}
-                  className="bg-blue-600 text-white px-4 py-2 rounded"
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  className="bg-green-600 text-white px-4 py-2 rounded"
-                >
-                  Submit
-                </button>
-              )}
-            </div>
-          </Form>
-        </div> */
-}
