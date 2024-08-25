@@ -17,10 +17,10 @@ async function getJobs() {
 export default async function JobsPage() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["jobs"],
-    queryFn: getJobs,
-  });
+  // await queryClient.prefetchQuery({
+  //   queryKey: ["jobs"],
+  //   queryFn: getJobs,
+  // });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
