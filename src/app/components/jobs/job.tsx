@@ -356,9 +356,9 @@ const Job = ({ id }: JobProps) => {
                   <br />
                 </div>
               </div>
-              <a className="font-bold md:text-xl lg:text-2xl mx-auto flex justify-center">
+              <a className="font-bold text-xl lg:text-2xl mx-auto flex justify-center">
                 <Button
-                  style="bg-purple-200 text-white px-10 py-2 rounded-full flex content-center"
+                  style="bg-purple-200 text-white px-10 py-4 rounded-full flex content-center"
                   onClick={() => console.log("apply")}
                   text="Apply for this job"
                 />

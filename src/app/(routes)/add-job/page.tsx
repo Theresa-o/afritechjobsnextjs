@@ -246,7 +246,7 @@ const AddJob = () => {
                             {isLoadingCategories ? (
                               <option>Loading...</option>
                             ) : (
-                              categories?.map((category: any) => (
+                              categories?.results?.map((category: any) => (
                                 <option
                                   key={category.id}
                                   value={category.id}
@@ -294,7 +294,7 @@ const AddJob = () => {
                             {isLoadingSkills ? (
                               <option>Loading...</option>
                             ) : (
-                              skills?.map((skill: any) => (
+                              skills?.results?.map((skill: any) => (
                                 <option
                                   key={skill.id}
                                   value={skill.id}
@@ -336,7 +336,7 @@ const AddJob = () => {
                             </span>
                           </label>
                           <div className="flex flex-col md:flex-row space-x-0 md:space-x-4">
-                            {jobTypes?.map((type: any) => (
+                            {jobTypes?.results?.map((type: any) => (
                               <div
                                 key={type.id}
                                 className="flex-1 mb-2 md:mb-0"
@@ -411,7 +411,7 @@ const AddJob = () => {
                             {isLoadingJobLevels ? (
                               <option>Loading...</option>
                             ) : (
-                              jobLevels?.map((level: any) => (
+                              jobLevels?.results?.map((level: any) => (
                                 <option
                                   key={level.id}
                                   value={level.id}
@@ -462,7 +462,7 @@ const AddJob = () => {
                             {isLoadingLocations ? (
                               <option>Loading...</option>
                             ) : (
-                              locations?.map((location: any) => (
+                              locations?.results?.map((location: any) => (
                                 <option key={location.id} value={location.id}>
                                   {location.name}
                                 </option>

@@ -3,15 +3,16 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <footer>
-      <div className="grid lg:grid-cols-2 my-10">
+      <div className="grid lg:grid-cols-2 my-10 pt-10">
         <div className="ml-4 md:ml-10 mb-10 md:mb-1">
           <div className="h-auto w-20">
-            <Image
+          <Image
               src="/vercel.svg"
               alt="Vercel Logo"
-              className="dark:invert"
+              // className="dark:invert"
               width={100}
               height={24}
+              className="mb-4"
               priority
             />
           </div>

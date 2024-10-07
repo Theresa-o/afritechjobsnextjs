@@ -5,26 +5,23 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-async function getJobs() {
-  try {
-    const res = await fetch("http://127.0.0.1:8000/jobs/");
-    return await res.json();
-  } catch (err: any) {
-    throw err.response.data;
-  }
-}
+// redundant, not in use, find  a WAY TO SCRAP
 
-export default async function JobsPage() {
+export default async function JobsPage({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
   const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["jobs"],
-  //   queryFn: getJobs,
-  // });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Jobs />
+      <Jobs searchParams={searchParams} />
     </HydrationBoundary>
   );
 }
+
+// this should be a comp, not a page

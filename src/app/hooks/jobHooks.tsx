@@ -1,3 +1,4 @@
+'use client'
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AddJobDTO } from "../types/jobTypes";
 import {
@@ -25,42 +26,50 @@ export const useAddJob = () => {
   });
 };
 
-export const useFetchedCategory = () => {
+export const useFetchedCategory = (filter?: string) => {
   return useQuery({
-    queryKey: ["category"],
-    queryFn: () => getCategory(),
+    queryKey: ["category", filter],
+    queryFn: () => getCategory(filter),
     // enabled: false,
   });
 };
 
-export const useFetchedSkills = () => {
+// export const useFetchedCategory = (filter?: string) => {
+//   return useQuery({
+//     queryKey: ["category", filter],
+//     queryFn: () => getCategory(filter),
+//     // enabled: false,
+//   });
+// };
+
+export const useFetchedSkills = (filter?: string) => {
   return useQuery({
-    queryKey: ["skills"],
-    queryFn: () => getSkills(),
+    queryKey: ["skills", filter],
+    queryFn: () => getSkills(filter),
     // enabled: false,
   });
 };
 
-export const useFetchedLocation = () => {
+export const useFetchedLocation = (filter?: string) => {
   return useQuery({
-    queryKey: ["location"],
-    queryFn: () => getLocation(),
+    queryKey: ["location", filter],
+    queryFn: () => getLocation(filter),
     // enabled: false,
   });
 };
 
-export const useFetchedJobType = () => {
+export const useFetchedJobType = (filter?: string) => {
   return useQuery({
-    queryKey: ["jobtype"],
-    queryFn: () => getJobType(),
+    queryKey: ["jobtype", filter],
+    queryFn: () => getJobType(filter),
     // enabled: false,
   });
 };
 
-export const useFetchedJobLevel = () => {
+export const useFetchedJobLevel = (filter?: string) => {
   return useQuery({
-    queryKey: ["joblevel"],
-    queryFn: () => getJobLevel(),
+    queryKey: ["joblevel", filter],
+    queryFn: () => getJobLevel(filter),
     // enabled: false,
   });
 };

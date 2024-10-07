@@ -4,21 +4,76 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../loading-spinner";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import Pagination from "../pagination";
 
-export default function Jobs() {
-  async function getJobs() {
+export default function Jobs({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+    category?: string;
+    level?: string;
+    type?: string;
+    location?: string;
+    skills?: string;
+  };
+}) {
+  const jokeParams = useSearchParams();
+  const query = searchParams?.query || "";
+  const category = searchParams?.category || "";
+  const level = searchParams?.level || "";
+  const type = searchParams?.type || "";
+  const location = searchParams?.location || "";
+  const skills = searchParams?.skills || "";
+  const currentPage = Number(searchParams?.page) || 1;
+  const router = useRouter();
+
+  async function getJobs(query = "", filters: any = {}, page = 1) {
     try {
-      const res = await fetch("http://127.0.0.1:8000/jobs/");
-      console.log("job list", res);
+      // Build the URL with the search query
+      const url = new URL("http://127.0.0.1:8000/jobs/");
+      if (query) {
+        url.searchParams.append("search", query);
+      }
+      if (filters.category) {
+        url.searchParams.append("job_category", filters.category);
+      }
+      if (filters.level) {
+        url.searchParams.append("job_level", filters.level);
+      }
+      if (filters.type) {
+        url.searchParams.append("job_type", filters.type);
+      }
+      if (filters.location) {
+        url.searchParams.append("job_location", filters.location);
+      }
+      if (filters.skills) {
+        url.searchParams.append("job_skills", filters.skills);
+      }
+      url.searchParams.append("page", page.toString());
+      const res = await fetch(url.toString(), { cache: "no-store" });
+      // router.push(`/jobs/${currentPage}`);
       return await res.json();
     } catch (err: any) {
-      throw err.response.data;
+      throw err;
     }
   }
+
+  // Router.push/jobs/page
+  // when you click on page 2, take the user to a different route
+  //
+
+  const filters = { category, level, type, location, skills };
+
   const { isLoading, error, data } = useQuery({
-    queryKey: ["jobs"],
-    queryFn: () => getJobs(),
+    queryKey: ["jobs", query, filters, currentPage],
+    queryFn: () => getJobs(query, filters, currentPage),
+    // keepPreviousData: true,
   });
+
+  // const totalPages = Math.ceil(data.count / data.results.length);
 
   return (
     <section>
@@ -29,10 +84,10 @@ export default function Jobs() {
               <LoadingSpinner isLoading={isLoading} />
             ) : (
               <>
-                {data?.map((job: any) => (
+                {data?.results?.map((job: any) => (
                   <div
                     key={job.id}
-                    className="job-listings mx-auto px-5 m-4 md:w-5/6"
+                    className="job-listings mx-auto px-5 md:px-5 m-4 md:w-5/6"
                   >
                     <Link href={`/jobs/${job.id}`}>
                       <div className="listing border-2 border-solid border-gray-300 hover:border-purple-500 active:border-purple-500  cursor-pointer">
@@ -48,11 +103,11 @@ export default function Jobs() {
                               />
                             </div>{" "}
                             <div>
-                              <h2 className="mx-2 my-2 text-xl font-semibold">
+                              <h2 className="mx-2 my-2 text-md md:text-xl font-semibold break-words">
                                 {job.job_title}
                               </h2>
                               <div className="flex mx-2 my-1">
-                                <h3 className="pr-2 text-gray-600 capitalize">
+                                <h3 className="pr-2 text-sm md:text-base text-gray-600 capitalize">
                                   {job.company_name}
                                 </h3>
                               </div>
@@ -78,7 +133,7 @@ export default function Jobs() {
                             </div>
                           </div>
                           <div>
-                            <div className="p-5 flex items-center">
+                            <div className="p-5 flex items-center text-sm md:text-base">
                               <Image
                                 src="/location.svg"
                                 alt="Location"
@@ -103,7 +158,7 @@ export default function Jobs() {
 
                         <div className="job-listing-bottom">
                           <div className="bottom-section bg-gray-100 p-4 flex justify-between">
-                            <div className="keyword flex">
+                            <div className="keyword flex flex-wrap text-sm md:text-base">
                               <Image
                                 src="/tag.svg"
                                 alt="Keywords"
@@ -116,7 +171,7 @@ export default function Jobs() {
                                 {job.job_type.job_type_choices} |
                               </div>
                               <div className="mr-2 hover:text-purple-500 active:text-purple-500">
-                                sales |
+                                {job.job_location.name}
                               </div>
                             </div>
                             <div className="apply-now md:flex hover:text-purple-500 active:text-purple-500 hidden ">
@@ -135,6 +190,13 @@ export default function Jobs() {
                     </Link>
                   </div>
                 ))}
+                <div className="mt-5 flex w-full justify-center">
+                  <Pagination data={data} currentPage={currentPage} />
+                  {/* <Pagination
+                    currentPage={currentPage}
+                    // totalPages={totalPages}
+                  /> */}
+                </div>
               </>
             )}
           </div>

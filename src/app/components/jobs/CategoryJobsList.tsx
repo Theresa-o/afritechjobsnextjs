@@ -49,7 +49,7 @@ const CategoryJobsList: React.FC<CategoryJobsListProps> = ({ categoryId }) => {
         </span>
       </div>
       <div className="job-listings-container">
-        {data?.map((job: any) => (
+        {data.results?.map((job: any) => (
           <div key={job.id} className="job-listing mx-auto px-5 m-4 md:w-5/6">
             <div className="listing border-2 border-solid border-gray-300 hover:border-purple-500 active:border-purple-500 cursor-pointer">
               <div className="flex justify-between">
@@ -85,7 +85,7 @@ const CategoryJobsList: React.FC<CategoryJobsListProps> = ({ categoryId }) => {
                       </div>
                       <div className="job-status flex space-x-2 pr-2">
                         <span className="tag bg-blue-200 text-blue-500 py-1 px-3 rounded-full text-sm">
-                          {job?.job_level
+                          {job.results?.job_level
                             .map((level: any) => level.job_level_choices)
                             .join(", ")}
                         </span>

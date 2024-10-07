@@ -14,7 +14,7 @@ const RelatedJobs = ({ jobData }: { jobData: any }) => {
 
   return (
     <>
-      {relatedJobsData?.map((job: any) => (
+      {relatedJobsData?.results?.map((job: any) => (
         <div key={job.id} className="job-listings mx-auto my-4">
           <Link href={`/jobs/${job.id}`}>
             <div className="listing border-2 border-solid border-gray-300 hover:border-purple-500 active:border-purple-500 cursor-pointer">
