@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 // redundant, not in use, find  a WAY TO SCRAP
+// NOT IN USE, SCRAP AFTER CONFIRMATION
 
 export default async function JobsPage({
   searchParams,

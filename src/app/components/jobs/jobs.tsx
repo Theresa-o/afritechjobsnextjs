@@ -61,10 +61,6 @@ export default function Jobs({
     }
   }
 
-  // Router.push/jobs/page
-  // when you click on page 2, take the user to a different route
-  //
-
   const filters = { category, level, type, location, skills };
 
   const { isLoading, error, data } = useQuery({
@@ -72,8 +68,6 @@ export default function Jobs({
     queryFn: () => getJobs(query, filters, currentPage),
     // keepPreviousData: true,
   });
-
-  // const totalPages = Math.ceil(data.count / data.results.length);
 
   return (
     <section>

@@ -55,9 +55,12 @@ const Job = ({ id }: JobProps) => {
 
   const { data: relatedJobsData, isLoading: relatedJobsLoading } = useQuery({
     queryKey: ["relatedJobs", data?.job_category.name],
-    queryFn: () => getCategoryJobs(data?.job_category.name),
+    queryFn: () => getCategoryJobs(data?.job_category.name, data?.id),
     enabled: !!data?.job_category.name,
   });
+
+  // console.log(id);
+  // console.log(data?.id);
 
   return (
     // TODO: The currently shown job should not show in related jobs
@@ -316,7 +319,13 @@ const Job = ({ id }: JobProps) => {
                   </div>
                   <div className="flex justify-center w-full">
                     <button className="bg-purple-200 text-white py-2  mt-3  w-full flex justify-center rounded-md">
-                      Apply
+                      <Link
+                        href={data?.job_application_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Apply
+                      </Link>
                     </button>
                   </div>
                 </div>
@@ -356,14 +365,14 @@ const Job = ({ id }: JobProps) => {
                   <br />
                 </div>
               </div>
-              <a className="font-bold text-xl lg:text-2xl mx-auto flex justify-center">
-                <Button
-                  style="bg-purple-200 text-white px-10 py-4 rounded-full flex content-center"
-                  onClick={() => console.log("apply")}
-                  text="Apply for this job"
-                />
-              </a>
-
+              <Link
+                href={data?.job_application_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-xl lg:text-2xl mx-auto flex justify-center bg-purple-200 text-white px-10 py-4 rounded-full"
+              >
+                Apply for this job
+              </Link>
               <div className="font-medium md:font-semibold uppercase text-xl md:text-2xl pt-8 pb-4 ">
                 Related Jobs
               </div>
@@ -372,7 +381,7 @@ const Job = ({ id }: JobProps) => {
                   <LoadingSpinner isLoading={isLoading} />
                 ) : (
                   <>
-                    <RelatedJobs jobData={data} />
+                    <RelatedJobs relatedJobsData={relatedJobsData} />
                   </>
                 )}
               </div>

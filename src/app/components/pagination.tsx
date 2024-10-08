@@ -15,7 +15,6 @@ export default function Pagination({ data, currentPage }: PaginationProps) {
   // const currentPage = Number(searchParams.get("page")) || 1;
   const pageSize = 5;
   const totalPages = Math.ceil(data.count / pageSize);
-  console.log(totalPages);
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
@@ -38,22 +37,22 @@ export default function Pagination({ data, currentPage }: PaginationProps) {
         </button>
       )}
 
-      {[...Array(totalPages)].map((_, index) => {
-        const pageNumber = index + 1;
-        return (
-          <button
-            key={pageNumber}
-            onClick={() => goToPage(pageNumber)}
-            className={`${
-              currentPage === pageNumber ? "bg-purple-200" : ""
-            } items-center px-4 py-2 mx-1 text-gray-700 bg-white rounded-md dark:bg-gray-800 dark:text-gray-200`}
-          >
-            {pageNumber}
-          </button>
-        );
-      })}
+      {currentPage < totalPages &&
+        [...Array(totalPages)].map((_, index) => {
+          const pageNumber = index + 1;
+          return (
+            <button
+              key={pageNumber}
+              onClick={() => goToPage(pageNumber)}
+              className={`${
+                currentPage === pageNumber ? "bg-purple-200" : ""
+              } items-center px-4 py-2 mx-1 text-gray-700 bg-white rounded-md dark:bg-gray-800 dark:text-gray-200`}
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
 
-      {/* {data.previous && ( */}
       {currentPage < totalPages && (
         <button
           onClick={() => goToPage(currentPage + 1)}

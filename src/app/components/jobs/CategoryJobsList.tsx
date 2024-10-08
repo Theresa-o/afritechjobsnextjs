@@ -28,11 +28,18 @@ const CategoryJobsList: React.FC<CategoryJobsListProps> = ({ categoryId }) => {
     queryFn: getCategoryJobs,
   });
 
+  console.log(data);
+
   if (isLoading) return <LoadingSpinner isLoading={isLoading} />;
   if (error) return <div>Error loading jobs</div>;
 
   return (
     <section>
+      <div>
+        <h1 className="font-bold text-xl mb-4 flex justify-center">
+          {data?.results[0]?.job_category?.name} Jobs
+        </h1>
+      </div>
       <div
         className="flex cursor-pointer place-items-center justify-center"
         onClick={() => router.push("/")}

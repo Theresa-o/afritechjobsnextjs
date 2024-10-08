@@ -30,9 +30,6 @@ const CategoryJobs = async ({ params }: { params: { categoryId: number } }) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <h1 className="font-bold text-xl mb-4 flex justify-center">
-        Category Jobs
-      </h1>
       <CategoryJobsList categoryId={categoryId} />
     </HydrationBoundary>
   );

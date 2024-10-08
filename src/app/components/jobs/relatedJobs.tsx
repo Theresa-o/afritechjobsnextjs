@@ -5,13 +5,7 @@ import { getCategoryJobs } from "@/app/services/jobService";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-const RelatedJobs = ({ jobData }: { jobData: any }) => {
-  const { data: relatedJobsData, isLoading: relatedJobsLoading } = useQuery({
-    queryKey: ["relatedJobs", jobData?.job_category.name],
-    queryFn: () => getCategoryJobs(jobData?.job_category.name),
-    enabled: !!jobData?.job_category.name,
-  });
-
+const RelatedJobs = ({ relatedJobsData }: { relatedJobsData: any }) => {
   return (
     <>
       {relatedJobsData?.results?.map((job: any) => (
@@ -41,12 +35,12 @@ const RelatedJobs = ({ jobData }: { jobData: any }) => {
                     <div className="flex mx-2 my-2">
                       <div className="job-status flex space-x-2 pr-2 ">
                         <span className="tag bg-green-300 text-green-500 py-1 px-3 rounded-full text-sm">
-                          {job.job_type.job_type_choices}
+                          {job?.job_type?.job_type_choices}
                         </span>
                       </div>
                       <div className="job-status flex space-x-2 pr-2 ">
                         <span className="tag bg-yellow-300 text-yellow-500 py-1 px-3 rounded-full text-sm">
-                          {job.job_skills
+                          {job?.job_skills
                             .map((skill: any) => skill.title)
                             .join(", ")}
                         </span>
@@ -59,7 +53,7 @@ const RelatedJobs = ({ jobData }: { jobData: any }) => {
                           level.job_level_choices
                       )
                       .join(", ")}{" "} */}
-                          {job.job_level.job_level_choices}
+                          {job?.job_level?.job_level_choices}
                         </span>
                       </div>
                     </div>
@@ -115,7 +109,7 @@ const RelatedJobs = ({ jobData }: { jobData: any }) => {
                     />
                     <span className="mr-1">Keywords:</span>
                     <div className="mr-2 hover:text-purple-500 active:text-[#6054ef]-500">
-                      {job.job_type.job_type_choices} |
+                      {job?.job_type?.job_type_choices} |
                     </div>
                     <div className="mr-2 hover:text-purple-500 active:text-purple-500">
                       sales |

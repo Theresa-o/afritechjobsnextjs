@@ -47,21 +47,31 @@ export const getLocation = async (filter?: string) => {
 };
 
 export const getJobType = async (filter?: string) => {
-  const response = await axiosInstance.get(`http://127.0.0.1:8000/jobs/type${filter ? `?job_type=${filter}` : ""}`);
+  const response = await axiosInstance.get(
+    `http://127.0.0.1:8000/jobs/type${filter ? `?job_type=${filter}` : ""}`
+  );
   // console.log(response);
   return response.data;
 };
 
 export const getJobLevel = async (filter?: string) => {
-  const response = await axiosInstance.get(`http://127.0.0.1:8000/jobs/level${filter ? `?job_level=${filter}` : ""}`);
+  const response = await axiosInstance.get(
+    `http://127.0.0.1:8000/jobs/level${filter ? `?job_level=${filter}` : ""}`
+  );
   // console.log(response);
   return response.data;
 };
 
-export const getCategoryJobs = async (categoryName: string) => {
+export const getCategoryJobs = async (
+  categoryName: string,
+  excludeJobId: number
+) => {
   const response = await axiosInstance.get(
-    `http://127.0.0.1:8000/jobs?category=${categoryName}`
+    // `http://127.0.0.1:8000/jobs/?job_category=${categoryName}`
+    `http://127.0.0.1:8000/jobs/?job_category=${categoryName}&exclude_job_id=${excludeJobId}`
   );
+  console.log(excludeJobId);
+  console.log(categoryName);
   return response.data;
 };
 
