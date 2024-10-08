@@ -108,12 +108,12 @@ const RelatedJobs = ({ relatedJobsData }: { relatedJobsData: any }) => {
                       height={17}
                     />
                     <span className="mr-1">Keywords:</span>
-                    <div className="mr-2 hover:text-purple-500 active:text-[#6054ef]-500">
+                    {/* <div className="mr-2 hover:text-purple-500 active:text-[#6054ef]-500">
                       {job?.job_type?.job_type_choices} |
                     </div>
                     <div className="mr-2 hover:text-purple-500 active:text-purple-500">
                       sales |
-                    </div>
+                    </div> */}
                   </div>
                   <div className="apply-now md:flex hover:text-purple-500 active:text-purple-500 hidden ">
                     <span>Apply Now</span>
