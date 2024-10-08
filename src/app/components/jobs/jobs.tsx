@@ -86,7 +86,8 @@ export default function Jobs({
                     <Link href={`/jobs/${job.id}`}>
                       <div className="listing border-2 border-solid border-gray-300 hover:border-purple-500 active:border-purple-500  cursor-pointer">
                         <div className="flex justify-between">
-                          <div className="flex pt-5  ">
+                          <div className="flex pt-5 w-1/5 md:w-full">
+                            {/* logo */}
                             <div className="job-logo bg-blue-200 rounded-full h-20 w-20 hidden md:flex flex-shrink-0 md:m-5">
                               <Image
                                 src="/vercel.svg"
@@ -96,8 +97,9 @@ export default function Jobs({
                                 height={37}
                               />
                             </div>{" "}
+                            {/* title and company name */}
                             <div>
-                              <h2 className="mx-2 my-2 text-md md:text-xl font-semibold break-words">
+                              <h2 className="mx-2 my-2 text-md md:text-xl md:font-semibold w-4/5">
                                 {job.job_title}
                               </h2>
                               <div className="flex mx-2 my-1">
@@ -126,8 +128,8 @@ export default function Jobs({
                               </div>
                             </div>
                           </div>
-                          <div>
-                            <div className="p-5 flex items-center text-sm md:text-base">
+                          <div className="text-sm md:text-base py-2">
+                            <div className="px-5 pt-5 pb-2 md:p-5 flex items-center">
                               <Image
                                 src="/location.svg"
                                 alt="Location"
@@ -135,7 +137,7 @@ export default function Jobs({
                                 width={17}
                                 height={17}
                               />
-                              <span className="mr-2 capitalize">
+                              <span className="md:mr-2 capitalize">
                                 {" "}
                                 {job.job_location
                                   .map((location: any) => location.name)
@@ -186,10 +188,6 @@ export default function Jobs({
                 ))}
                 <div className="mt-5 flex w-full justify-center">
                   <Pagination data={data} currentPage={currentPage} />
-                  {/* <Pagination
-                    currentPage={currentPage}
-                    // totalPages={totalPages}
-                  /> */}
                 </div>
               </>
             )}
