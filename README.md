@@ -20,19 +20,5 @@ Welcome to the African Tech Job Board! This project is aimed at creating a centr
 - Implemented API endpoints for posting job categories, skills, locations, types, and levels.
 - Designed APIs for creating, updating, retrieving, and deleting job listings and related information.
 
-## Usage
-The African Tech Job Board is designed to be user-friendly and self-explanatory. Here are some basic usage guidelines:
-
-Job Seekers:
-
-- Create a user profile with your information and upload your resume.
-- Browse and search for job listings.
-- Apply to job listings
-  
-Employers:
-
-- Create an employer profile to post job listings.
-- Manage job listings and applications from potential candidates.
-
 ## Backend Github Repo
 https://github.com/Theresa-o/afritechjobs
