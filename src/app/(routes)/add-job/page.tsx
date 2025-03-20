@@ -612,7 +612,7 @@ const AddJob = () => {
                         htmlFor="companysWebsite"
                         className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Website{" "}
+                        Company&apos;s Website{" "}
                         <span className="text-red-500 ltr:mr-1 rtl:ml-1">
                           *
                         </span>

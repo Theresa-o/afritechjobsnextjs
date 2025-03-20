@@ -99,7 +99,7 @@ export default function Jobs({
                             </div>{" "}
                             {/* title and company name */}
                             <div>
-                              <h2 className="mx-2 my-2 text-md md:text-xl md:font-semibold w-4/5">
+                              <h2 className="mx-2 my-2 text-md md:text-xl md:font-semibold w-4/5 md:w-full">
                                 {job.job_title}
                               </h2>
                               <div className="flex mx-2 my-1">
