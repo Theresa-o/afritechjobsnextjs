@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AddJobDTO } from "../types/jobTypes";
 import {
@@ -74,10 +74,13 @@ export const useFetchedJobLevel = (filter?: string) => {
   });
 };
 
-export const useFetchedCategoryJobs = (categoryId: string) => {
+export const useFetchedCategoryJobs = (
+  categoryId: string,
+  excludeJobId?: number
+) => {
   return useQuery({
     queryKey: ["categoryJobs", categoryId],
-    queryFn: () => getCategoryJobs(categoryId),
+    queryFn: () => getCategoryJobs(categoryId, excludeJobId || 0),
     // enabled: false,
   });
 };
