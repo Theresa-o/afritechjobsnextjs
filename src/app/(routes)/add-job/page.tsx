@@ -634,7 +634,7 @@ const AddJob = () => {
                         htmlFor="companysEmail"
                         className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Email{" "}
+                        Company&apos;s Email{" "}
                         <span className="text-red-500 ltr:mr-1 rtl:ml-1">
                           *
                         </span>
@@ -656,7 +656,7 @@ const AddJob = () => {
                         htmlFor="companysDescription"
                         className="block text-gray-700 text-sm font-bold"
                       >
-                        Company's Description{" "}
+                        Company&apos;s Description{" "}
                         <span className="text-red-500 ltr:mr-1 rtl:ml-1">
                           *
                         </span>
