@@ -47,12 +47,6 @@ const RelatedJobs = ({ relatedJobsData }: { relatedJobsData: any }) => {
                       </div>
                       <div className="job-status flex space-x-2 pr-2">
                         <span className="tag bg-blue-200 text-blue-500 py-1 px-3 rounded-full text-sm">
-                          {/* {job?.job_level
-                      .map(
-                        (level: any) =>
-                          level.job_level_choices
-                      )
-                      .join(", ")}{" "} */}
                           {job?.job_level?.job_level_choices}
                         </span>
                       </div>
