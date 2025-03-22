@@ -17,7 +17,7 @@ const Footer = () => {
             />
           </div>
           <p>The leading job board for African TechStars</p>
-          <small>2023 AfriTechJobs. All rights reserved</small>
+          <small>2025 AfriTechJobs. All rights reserved</small>
         </div>
         <div className="grid grid-cols-3 md:grid-rows-1 md:gap-x-10 mx-5 gap-x-5 ">
           <div className="">
