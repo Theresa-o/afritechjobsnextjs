@@ -6,9 +6,9 @@ const Footer = () => {
       <div className="grid lg:grid-cols-2 my-10 pt-10">
         <div className="ml-4 md:ml-10 mb-10 md:mb-1">
           <div className="h-auto w-20">
-          <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
+            <Image
+              src="/afri.png"
+              alt="Afritechjobs Logo"
               // className="dark:invert"
               width={100}
               height={24}

@@ -17,8 +17,8 @@ const Navbar = () => {
         <div className="flex font-medium justify-around">
           <div className="z-50 p-5 md:w-auto w-full cursor-pointer flex justify-between">
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
+              src="/afri.png"
+              alt="Afritechjobs Logo"
               // className="dark:invert"
               width={100}
               height={24}

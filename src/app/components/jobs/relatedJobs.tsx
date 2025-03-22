@@ -16,8 +16,8 @@ const RelatedJobs = ({ relatedJobsData }: { relatedJobsData: any }) => {
                 <div className="flex pt-5 ">
                   <div className="job-logo bg-blue-200 rounded-full h-20 w-20 hidden md:flex flex-shrink-0 md:m-5">
                     <Image
-                      src="/vercel.svg"
-                      alt="Afritech Logo"
+                      src="/afri.png"
+                      alt="Afritechjobs Logo"
                       className="rounded-full"
                       width={180}
                       height={37}
