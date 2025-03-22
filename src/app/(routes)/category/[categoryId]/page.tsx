@@ -14,7 +14,7 @@ const CategoryJobs = async ({ params }: { params: { categoryId: number } }) => {
   async function getCategoryJob(categoryId: number) {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/jobs?category=${categoryId}`
+        `https://teresita.pythonanywhere.com/jobs?category=${categoryId}`
       );
       return await res.data;
     } catch (err: any) {

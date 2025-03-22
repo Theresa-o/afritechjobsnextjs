@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AddJobDTO } from "../types/jobTypes";
 
-const BASE_URL = "http://127.0.0.1:8000/";
+const BASE_URL = "https://teresita.pythonanywhere.com/";
 // const axiosInstance = axios.create({ baseURL: BASE_URL });
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

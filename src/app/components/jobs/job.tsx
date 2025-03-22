@@ -40,7 +40,9 @@ const Job = ({ id }: JobProps) => {
 
   async function getJob(id: number) {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/jobs/${id}/`);
+      const res = await axios.get(
+        `https://teresita.pythonanywhere.com/jobs/${id}/`
+      );
       return await res.data;
     } catch (err: any) {
       console.error("Failed to fetch job:", err);

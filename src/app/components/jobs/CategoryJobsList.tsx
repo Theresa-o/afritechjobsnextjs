@@ -15,7 +15,7 @@ const CategoryJobsList: React.FC<CategoryJobsListProps> = ({ categoryId }) => {
   async function getCategoryJobs() {
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/jobs?category=${categoryId}`
+        `https://teresita.pythonanywhere.com/jobs?category=${categoryId}`
       );
       return await res.json();
     } catch (err: any) {

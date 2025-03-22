@@ -33,7 +33,7 @@ export default function Jobs({
   async function getJobs(query = "", filters: any = {}, page = 1) {
     try {
       // Build the URL with the search query
-      const url = new URL("http://127.0.0.1:8000/jobs/");
+      const url = new URL("https://teresita.pythonanywhere.com/jobs/");
       if (query) {
         url.searchParams.append("search", query);
       }
